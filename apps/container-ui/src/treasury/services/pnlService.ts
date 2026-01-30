@@ -1,10 +1,4 @@
-// services/pnlService.ts
-const API_BASE_URL = "http://10.116.15.225:8080";
-const API_HEADERS = {
-  "client-id": "jainglobal",
-  "secret-id": "940575d645433959676cf6a871bfd446438ab627ddf86f5499bf94bab417cac1",
-  "Content-Type": "application/json", // optional, for JSON APIs
-};
+import { API_HEADERS, apiBaseUrl } from "@/common/config/environment";
 
 export interface PnlData {
     date: string;
@@ -71,7 +65,7 @@ export async function fetchPnlData(
   endDate: string,
   year: string
 ): Promise<PnlData[]> {
-  const url = `${API_BASE_URL}/pnl_dashboard?start_date=${startDate}&end_date=${endDate}&year=${year}`;
+  const url = `${apiBaseUrl}/pnl_dashboard?start_date=${startDate}&end_date=${endDate}&year=${year}`;
 
   try {
     const response = await fetch(url, {
@@ -95,8 +89,7 @@ export async function fetchPnlDataByDate(
     selected_date: string
  
   ): Promise<PnlGridResponse> {
-    // const url = `${API_BASE_URL_PROD}/pnl_dashboard/grid?selected_date=${selected_date}`;
-    const url = `http://10.115.12.208:8080/pnl_dashboard/grid?selected_date=${selected_date}`;
+    const url = `${apiBaseUrl}/pnl_dashboard/grid?selected_date=${selected_date}`;
   
     try {
       const response = await fetch(url, {

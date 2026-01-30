@@ -1,0 +1,79 @@
+.pnlDashboard {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.pnlDashboardHeader {
+  align-items: center;
+}
+
+.pnlDashboardToggle {
+  margin-left: 8px;
+}
+
+.pnlDashboardDatePicker {
+  width: 200px;
+}
+
+.pnlDashboardLoading {
+  padding: 20px;
+  text-align: center;
+}
+
+.pnlDashboardTotals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f7f8fa;
+  border: 1px solid #e5e7eb;
+}
+
+.pnlDashboard--dark .pnlDashboardTotals {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pnlDashboardTotalsTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin: 0;
+}
+
+.pnlDashboardGrid {
+  height: 320px;
+  width: 100%;
+}
+
+.pnlDashboardGrid.ag-theme-quartz,
+.pnlDashboardGrid.ag-theme-quartz-dark {
+  --ag-font-size: 12px;
+  --ag-grid-size: 4px;
+  --ag-row-height: 28px;
+  --ag-header-height: 28px;
+  --ag-cell-horizontal-padding: 6px;
+}
+
+.pnlDashboardGrid .ag-cell,
+.pnlDashboardGrid .ag-header-cell,
+.pnlDashboardGrid .ag-header-cell-label {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.pnlDashboardGrid .ag-cell,
+.pnlDashboardGrid .ag-header-cell-text {
+  font-size: 12px;
+}

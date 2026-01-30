@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { GridReadyEvent, ColDef } from 'ag-grid-community';
-import { Spin, Alert, Space, DatePicker, Tag } from 'antd';
+import { Spin, Alert, Space, DatePicker, Tag, Switch } from 'antd';
 import dayjs from 'dayjs';
 import { useTheme, BodyText } from '@apac-ui-warehouse/component-warehouse';
 import { fetchPnlDataByDate, AssetPnlSummary1, AssetPnlSummary2 } from '../../services/pnlService';
+import './PnlDashboard.css';
 
 // (No manual module registration required for this app setup)
 
@@ -30,6 +31,7 @@ export const PnlDashboard: React.FC = () => {
 
   const [table1, setTable1] = useState<AssetPnlSummary1[]>([]);
   const [table2, setTable2] = useState<AssetPnlSummary2[]>([]);
+  const [viewMode, setViewMode] = useState<'MTD' | 'YTD'>('MTD');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,10 +84,16 @@ const headerMap: Record<string, string> = {
     }
     return false;
   };
+    const shouldIncludeKey = (key: string) => {
+      if (key.startsWith('MTD_')) return viewMode === 'MTD';
+      if (key.startsWith('YTD_')) return viewMode === 'YTD';
+      return true;
+    };
+
     // Build column definitions from first row of each table
     const createColDefs = (rows: any[] | undefined) => {
       if (!rows || rows.length === 0) return [] as ColDef[];
-      const keys = Object.keys(rows[0] as any);
+      const keys = Object.keys(rows[0] as any).filter(shouldIncludeKey);
 
       // Ensure `Current_Ntl` is the second column (index 1) if present
       const target = 'Current_Ntl';
@@ -108,8 +116,8 @@ const headerMap: Record<string, string> = {
       });
     };
 
-  const colDefs1 = useMemo<ColDef[]>(() => createColDefs(table1), [table1]);
-    const colDefs2 = useMemo<ColDef[]>(() => createColDefs(table2), [table2]);
+  const colDefs1 = useMemo<ColDef[]>(() => createColDefs(table1), [table1, viewMode]);
+    const colDefs2 = useMemo<ColDef[]>(() => createColDefs(table2), [table2, viewMode]);
 
   const table1Totals = useMemo(() => {
     if (!table1 || table1.length === 0 || colDefs1.length === 0)
@@ -175,7 +183,7 @@ const headerMap: Record<string, string> = {
     try {
       gridApi2.current?.sizeColumnsToFit?.();
     } catch {}
-  }, [table1, table2]);
+  }, [table1, table2, viewMode]);
 
   // Temporarily override parent layout container styles so this page uses full content width.
   useEffect(() => {
@@ -241,63 +249,42 @@ const headerMap: Record<string, string> = {
   return (
     // Local container overrides: remove max-width/padding so this page can use full parent width
     <div
-      style={{
-        width: '100%',
-        maxWidth: 'none',
-        margin: 0,
-        padding: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        boxSizing: 'border-box',
-      }}
+      className={`pnlDashboard${theme === 'dark' ? ' pnlDashboard--dark' : ''}`}
     >
-      <Space direction="horizontal" style={{ alignItems: 'center' }}>
+      <Space direction="horizontal" className="pnlDashboardHeader">
         <BodyText strong>Selected date</BodyText>
         <DatePicker
           placeholder="Select Date"
           value={selectedDate ? dayjs(selectedDate, 'YYYY-MM-DD') : null}
           onChange={(date) => setSelectedDate(date ? date.format('YYYY-MM-DD') : '')}
           format="YYYY-MM-DD"
-          style={{ width: 200 }}
+          className="pnlDashboardDatePicker"
           allowClear={false}
+        />
+        <Switch
+          className="pnlDashboardToggle"
+          checked={viewMode === 'YTD'}
+          onChange={(checked) => setViewMode(checked ? 'YTD' : 'MTD')}
+          checkedChildren="YTD"
+          unCheckedChildren="MTD"
         />
       </Space>
 
       {error && <Alert message="Error" description={error} type="error" showIcon />}
 
       {loading ? (
-        <div style={{ padding: 20, textAlign: 'center' }}>
+        <div className="pnlDashboardLoading">
           <Spin />
         </div>
       ) : (
         <>
           {table1Totals.length > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 8,
-                alignItems: 'center',
-                padding: '8px 12px',
-                borderRadius: 8,
-                background: theme === 'dark' ? 'rgba(255,255,255,0.06)' : '#f7f8fa',
-                border: theme === 'dark' ? '1px solid rgba(255,255,255,0.12)' : '1px solid #e5e7eb',
-              }}
-            >
+            <div className="pnlDashboardTotals">
               {table1Totals.map((item) => (
                 <Tag
                   key={item.key}
                   color={theme === 'dark' ? 'geekblue' : 'blue'}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 10px',
-                    borderRadius: 999,
-                    fontSize: 12,
-                    margin: 0,
-                  }}
+                  className="pnlDashboardTotalsTag"
                 >
                   <span>{item.label}</span>
                   <span style={{ fontWeight: 600 }}>{formatRounded(item.total)}</span>
@@ -306,8 +293,7 @@ const headerMap: Record<string, string> = {
             </div>
           )}
           <div
-            className={`ag-theme-quartz${theme === 'dark' ? '-dark' : ''}`}
-            style={{ height: 320, width: '100%' }}
+            className={`pnlDashboardGrid ag-theme-quartz${theme === 'dark' ? '-dark' : ''}`}
           >
             <AgGridReact
               rowData={table1 as any}
@@ -323,8 +309,7 @@ const headerMap: Record<string, string> = {
           </div>
 
           <div
-            className={`ag-theme-quartz${theme === 'dark' ? '-dark' : ''}`}
-            style={{ height: 320, width: '100%' }}
+            className={`pnlDashboardGrid ag-theme-quartz${theme === 'dark' ? '-dark' : ''}`}
           >
             <AgGridReact
               rowData={table2 as any}

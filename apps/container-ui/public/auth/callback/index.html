@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signing in...</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #231f20;
+        color: #ffffff;
+        font-family: 'Sequel Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+      .container {
+        text-align: center;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script>
+      // Azure AD SSO Callback Handler
+      // This page handles the redirect from Azure AD and forwards to the main app
+      (function() {
+        // Preserve the hash and query params from Azure AD
+        var hash = window.location.hash;
+        var search = window.location.search;
+        
+        // Redirect to the main app's auth callback route
+        window.location.replace('/ui/auth/callback' + search + hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="spinner"></div>
+      <div>Completing sign-in...</div>
+    </div>
+  </body>
+</html>
+

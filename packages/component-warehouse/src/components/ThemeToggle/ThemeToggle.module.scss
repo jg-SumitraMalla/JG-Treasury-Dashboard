@@ -1,0 +1,12 @@
+@use '../../theme/colors' as *;
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: $color-primary;
+  }
+}

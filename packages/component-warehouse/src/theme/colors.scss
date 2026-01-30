@@ -1,0 +1,111 @@
+// APAC UI Warehouse Color Theme
+// Standard color palette used across the entire project
+
+// Primary Colors - Blue
+$color-primary: #4E738A;
+$color-primary-hover: #3e5c6f;
+$color-primary-light: #6b8fa3;
+$color-primary-dark: #3a5566;
+$color-primary-lighter: #8ba5b8;
+$color-primary-darker: #2d4250;
+
+// Secondary Colors - Provence
+$color-secondary: #7A97AB;
+$color-secondary-hover: #6a87a1;
+$color-secondary-light: #8ba5b8;
+$color-secondary-dark: #5a7a8f;
+$color-secondary-lighter: #9cb5c7;
+$color-secondary-darker: #4a6a7d;
+
+// Semantic Colors
+$color-success: #52c41a;
+$color-success-hover: #389e0d;
+$color-success-light: #73d13d;
+$color-success-dark: #389e0d;
+$color-success-lighter: #95de64;
+$color-success-darker: #237804;
+
+$color-warning: #faad14;
+$color-warning-hover: #d48806;
+$color-warning-light: #ffc53d;
+$color-warning-dark: #d48806;
+$color-warning-lighter: #ffd666;
+$color-warning-darker: #ad6800;
+
+$color-error: #ff4d4f;
+$color-error-hover: #cf1322;
+$color-error-light: #ff7875;
+$color-error-dark: #cf1322;
+$color-error-lighter: #ffa39e;
+$color-error-darker: #a8071a;
+
+$color-info: #1890ff;
+$color-info-hover: #096dd9;
+$color-info-light: #40a9ff;
+$color-info-dark: #096dd9;
+$color-info-lighter: #69c0ff;
+$color-info-darker: #0050b3;
+
+// Neutral Colors
+$color-text-primary: #231F20; // Black - primary text on light backgrounds
+$color-text-secondary: #323E48; // Muted Blue - secondary text
+$color-text-tertiary: #4E738A; // Blue - tertiary text
+$color-text-disabled: #7A97AB; // Provence - disabled text
+$color-text-inverse: #FFFFFF; // White - text on dark backgrounds
+
+$color-bg-primary: #FFFFFF; // White - main background
+$color-bg-secondary: #E7E7E0; // Limestone - secondary background
+$color-bg-tertiary: #F5F5F5; // Light gray for subtle backgrounds
+$color-bg-disabled: #E7E7E0; // Limestone - disabled background
+$color-bg-dark: #323E48; // Muted Blue - dark background (sidebar)
+$color-bg-dark-secondary: #231F20; // Black - darker background
+
+$color-border: #7A97AB; // Provence - default borders
+$color-border-light: #E7E7E0; // Limestone - light borders
+$color-border-dark: #4E738A; // Blue - dark borders
+$color-border-hover: #4E738A; // Blue - hover borders
+
+// Grayscale - proper progression
+$color-gray-50: #F5F5F5; // Very light gray
+$color-gray-100: #E7E7E0; // Limestone
+$color-gray-200: #D9D9D9; // Light gray
+$color-gray-300: #7A97AB; // Provence
+$color-gray-400: #4E738A; // Blue
+$color-gray-500: #323E48; // Muted Blue
+$color-gray-600: #323E48; // Muted Blue
+$color-gray-700: #231F20; // Black
+$color-gray-800: #231F20; // Black
+$color-gray-900: #231F20; // Black
+
+// Shadows (for box-shadow)
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md:
+  0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl:
+  0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+// Drop-shadow compatible shadows (single shadow values for filter: drop-shadow())
+$drop-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$drop-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$drop-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$drop-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+
+// Spacing (for reference, can be used in SCSS)
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// Border Radius - Flat design (reduced values)
+$radius-sm: 2px;
+$radius-md: 2px;
+$radius-lg: 4px;
+$radius-xl: 4px;
+$radius-full: 9999px;

@@ -1,0 +1,31 @@
+{
+  "name": "apac-ui-warehouse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=container-ui",
+    "build": "npm run build --workspace=container-ui",
+    "test": "npm run test --workspace=container-ui",
+    "test:ui": "npm run test:ui --workspace=container-ui",
+    "lint": "npm run lint --workspace=container-ui",
+    "preview": "npm run preview --workspace=container-ui",
+    "components:dev": "npm run dev --workspace=@apac-ui-warehouse/component-warehouse",
+    "components:build": "npm run build --workspace=@apac-ui-warehouse/component-warehouse",
+    "components:storybook": "npm run storybook --workspace=@apac-ui-warehouse/component-warehouse",
+    "components:test": "npm run test --workspace=@apac-ui-warehouse/component-warehouse",
+    "components:lint": "npm run lint --workspace=@apac-ui-warehouse/component-warehouse",
+    "components:format": "npm run format --workspace=@apac-ui-warehouse/component-warehouse"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

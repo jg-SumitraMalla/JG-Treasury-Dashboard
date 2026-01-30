@@ -1,0 +1,113 @@
+// Ensure theme variables are available from colors
+@use './colors' as *;
+
+// Font Face Declarations for Sequel Sans
+// Note: Font files should be placed in the public/fonts directory or assets/fonts
+// Update the paths below to match your font file locations
+
+@font-face {
+  font-family: 'Sequel Sans';
+  src: url('/fonts/SequelSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sequel Sans';
+  src: url('/fonts/SequelSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sequel Sans';
+  src: url('/fonts/SequelSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Theme CSS Variables
+// These variables change based on the theme class on the root element
+
+:root {
+  // Light theme (default)
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-tertiary: #{$color-text-tertiary};
+  --color-text-disabled: #{$color-text-disabled};
+  --color-text-inverse: #{$color-text-inverse};
+
+  --color-bg-primary: #{$color-bg-primary};
+  --color-bg-secondary: #{$color-bg-secondary};
+  --color-bg-tertiary: #{$color-bg-tertiary};
+  --color-bg-disabled: #{$color-bg-disabled};
+
+  --color-border: #{$color-border};
+  --color-border-light: #{$color-border-light};
+  --color-border-dark: #{$color-border-dark};
+  --color-border-hover: #{$color-border-hover};
+
+  // Card-specific border
+  --color-card-border: #{$color-border};
+
+  // Sidebar colors
+  --color-sidebar-bg: #{$color-bg-dark}; // Muted Blue
+  --color-sidebar-text: #{$color-text-inverse}; // White
+  --color-sidebar-hover: #{$color-primary-dark}; // Darker blue for hover
+  --color-sidebar-selected: #{$color-primary}; // Blue for selected
+}
+
+.dark {
+  // Dark theme - using new color palette
+  --color-text-primary: #E7E7E0; // Limestone (light text on dark)
+  --color-text-secondary: #7A97AB; // Provence
+  --color-text-tertiary: #4E738A; // Blue
+  --color-text-disabled: #323E48; // Muted Blue
+  --color-text-inverse: #231F20; // Black
+
+  // Background colors using new palette - with proper layering for dark mode
+  --color-bg-primary: #323E48; // Muted Blue - cards and primary containers
+  --color-bg-secondary: #2a343d; // Slightly darker - page/section backgrounds
+  --color-bg-tertiary: #3a4a56; // Slightly lighter - nested sections inside cards
+  --color-bg-disabled: #231F20; // Black
+
+  // Border colors using new palette
+  --color-border: #4E738A; // Blue
+  --color-border-light: #4a5a66; // Subtle border for dark mode
+  --color-border-dark: #323E48; // Muted Blue
+  --color-border-hover: #7A97AB; // Provence
+
+  // Card-specific border for better visibility
+  --color-card-border: #4E738A; // Blue
+
+  // Sidebar colors (same in dark mode since sidebar is always dark)
+  --color-sidebar-bg: #323E48; // Muted Blue
+  --color-sidebar-text: #FFFFFF; // White
+  --color-sidebar-hover: #3a5566; // Darker blue for hover
+  --color-sidebar-selected: #4E738A; // Blue for selected
+}
+
+// Apply theme variables to body and main containers
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: 'Sequel Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+// Apply font to all elements
+* {
+  font-family: 'Sequel Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+// Preserve monospace for code elements
+code,
+pre,
+.monospace {
+  font-family: 'Courier New', Courier, monospace;
+}

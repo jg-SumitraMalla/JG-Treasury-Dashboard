@@ -1,0 +1,266 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as ColorsStories from './Colors.stories';
+
+<Meta of={ColorsStories} />
+
+# Color Theme System
+
+The APAC UI Warehouse uses a standardized color palette that ensures consistency across the entire application. All colors are available in both SCSS variables and TypeScript constants.
+
+## Overview
+
+Our color system is organized into several categories:
+
+- **Primary Colors**: Main brand colors used for primary actions and highlights
+- **Secondary Colors**: Supporting brand colors for secondary actions
+- **Semantic Colors**: Success, Warning, Error, and Info states
+- **Text Colors**: Colors for different text hierarchy levels
+- **Background Colors**: Colors for backgrounds and surfaces
+- **Border Colors**: Colors for borders and dividers
+- **Grayscale**: Neutral gray scale from 50 to 900
+- **Shadows**: Elevation and depth styles
+
+## Getting Started
+
+### Installation
+
+The color theme is automatically included when you import the component warehouse:
+
+```typescript
+import { colors } from '@apac-ui-warehouse/component-warehouse';
+```
+
+### SCSS Usage
+
+Import the colors in your SCSS files:
+
+```scss
+@import '@apac-ui-warehouse/component-warehouse/theme/colors.scss';
+
+.my-component {
+  background-color: $color-primary;
+  color: $color-text-inverse;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-md;
+}
+```
+
+### TypeScript/JavaScript Usage
+
+Use the colors object directly:
+
+```typescript
+import { colors, getColor } from '@apac-ui-warehouse/component-warehouse';
+
+// Direct access
+const primaryColor = colors.primary;
+
+// Dynamic access with helper
+const secondaryColor = getColor('secondary');
+
+// Use in inline styles
+const style = {
+  backgroundColor: colors.primary,
+  color: colors.textInverse,
+  border: `1px solid ${colors.border}`,
+};
+```
+
+## Color Categories
+
+### Primary Colors
+
+Primary colors are the main brand colors used throughout the application for primary actions, links, and key UI elements.
+
+<Story of={ColorsStories.PrimaryColors} />
+
+**Usage:**
+
+- Primary buttons and CTAs
+- Active links and navigation items
+- Brand highlights and accents
+- Important status indicators
+
+### Secondary Colors
+
+Secondary colors support the primary palette and are used for secondary actions and accents.
+
+<Story of={ColorsStories.SecondaryColors} />
+
+**Usage:**
+
+- Secondary buttons and actions
+- Supporting UI elements
+- Accent colors for variety
+- Complementary highlights
+
+### Semantic Colors
+
+Semantic colors communicate different states and meanings in the interface.
+
+<Story of={ColorsStories.SemanticColors} />
+
+**Usage Guidelines:**
+
+- **Success**: Positive actions, completed states, success messages
+- **Warning**: Cautionary messages, pending states, important notices
+- **Error**: Error messages, destructive actions, critical alerts
+- **Info**: Informational messages, neutral states, general notifications
+
+### Text Colors
+
+Text colors provide hierarchy and readability across different contexts.
+
+<Story of={ColorsStories.TextColors} />
+
+**Usage Guidelines:**
+
+- **textPrimary**: Main content, headings, important text
+- **textSecondary**: Supporting text, descriptions, metadata
+- **textTertiary**: Less important information, hints, placeholders
+- **textDisabled**: Disabled states, inactive content
+- **textInverse**: Text on dark backgrounds
+
+### Background Colors
+
+Background colors create visual hierarchy and layering in the interface.
+
+<Story of={ColorsStories.BackgroundColors} />
+
+**Usage Guidelines:**
+
+- **bgPrimary**: Default white background for main content areas
+- **bgSecondary**: Subtle background for cards and elevated surfaces
+- **bgTertiary**: Even more subtle background for nested elements
+- **bgDisabled**: Background for disabled states
+- **bgDark**: Dark theme backgrounds
+- **bgDarkSecondary**: Secondary dark backgrounds
+
+### Border Colors
+
+Border colors provide separation and structure to UI elements.
+
+<Story of={ColorsStories.BorderColors} />
+
+**Usage Guidelines:**
+
+- **border**: Default borders for cards, inputs, and containers
+- **borderLight**: Subtle borders for dividers and separators
+- **borderDark**: Stronger borders for emphasis
+- **borderHover**: Interactive border states
+
+### Grayscale Palette
+
+A complete grayscale palette for neutral elements and backgrounds.
+
+<Story of={ColorsStories.Grayscale} />
+
+**Usage:**
+
+- Neutral backgrounds when brand colors aren't appropriate
+- Text colors in specific contexts
+- Borders and dividers
+- Disabled states
+- Subtle UI elements
+
+### Shadows
+
+Shadow styles create depth and elevation in the interface.
+
+<Story of={ColorsStories.Shadows} />
+
+**Usage Guidelines:**
+
+- **shadowSm**: Subtle elevation for small elements
+- **shadowMd**: Standard elevation for cards and panels
+- **shadowLg**: Prominent elevation for modals and overlays
+- **shadowXl**: Maximum elevation for floating elements
+
+## Best Practices
+
+### 1. Consistency
+
+Always use theme colors instead of hardcoded hex values. This ensures consistency and makes theme updates easier.
+
+❌ **Don't:**
+
+```scss
+.button {
+  background-color: #4e738a; // Hardcoded
+}
+```
+
+✅ **Do:**
+
+```scss
+.button {
+  background-color: $color-primary; // Theme color
+}
+```
+
+### 2. Semantic Meaning
+
+Use semantic colors appropriately. Don't use error colors for non-error states, or success colors for warnings.
+
+### 3. Contrast
+
+Ensure sufficient contrast between text and background colors for accessibility:
+
+- Use `textPrimary` on light backgrounds
+- Use `textInverse` on dark backgrounds
+- Check contrast ratios meet WCAG AA standards
+
+### 4. Hierarchy
+
+Use text color hierarchy to guide user attention:
+
+- Primary text for important content
+- Secondary text for supporting information
+- Tertiary text for less important details
+
+### 5. States
+
+Use hover, active, and disabled variants appropriately:
+
+- Hover states should be slightly darker/lighter
+- Disabled states should use `textDisabled` and `bgDisabled`
+- Active states should clearly indicate selection
+
+## Examples
+
+<Story of={ColorsStories.UsageExamples} />
+
+## Complete Palette
+
+<Story of={ColorsStories.AllColors} />
+
+## Migration Guide
+
+If you're migrating from hardcoded colors:
+
+1. **Identify hardcoded colors** in your codebase
+2. **Map to theme colors** using the color palette above
+3. **Replace in SCSS**: Change `#hex` to `$color-*` variables
+4. **Replace in TypeScript**: Change `'#hex'` to `colors.*`
+5. **Test thoroughly** to ensure visual consistency
+
+## Accessibility
+
+All colors in the theme are designed with accessibility in mind:
+
+- Text colors meet WCAG contrast requirements
+- Semantic colors are distinguishable for colorblind users
+- Dark mode support with `bgDark` and `bgDarkSecondary`
+
+## Customization
+
+To customize the theme for your brand:
+
+1. Update values in `src/theme/colors.scss`
+2. Update values in `src/theme/colors.ts`
+3. Rebuild the component warehouse
+4. Import the updated theme in your application
+
+## Support
+
+For questions or issues with the color theme system, please refer to the [Theme README](../../theme/README.md) or contact the design system team.

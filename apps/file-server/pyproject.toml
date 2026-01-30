@@ -1,0 +1,28 @@
+[project]
+name = "apac-file-server"
+version = "1.0.0"
+description = "FastAPI server to serve APAC UI Warehouse static files"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["file_server"]
+
+[project.scripts]
+file-server = "file_server.main:run"
+

@@ -1,0 +1,36 @@
+{
+  "name": "pnl",
+  "version": "0.1.0",
+  "private": true,
+  "base": "/pnl",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,less,scss,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,less,scss,json}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "@apac-ui-warehouse/component-warehouse": "*",
+    "antd": "^5.29.1",
+    "framer-motion": "^12.23.24",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.9.6"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "oxlint": "^0.15.0",
+    "prettier": "^3.2.5",
+    "sass": "^1.94.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.21"
+  }
+}

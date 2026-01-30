@@ -1,0 +1,198 @@
+@use '../../theme/colors' as *;
+
+.dashboardLayout {
+  min-height: 100vh;
+}
+
+.sider {
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-sidebar-bg) !important;
+  
+  // Override Ant Design Sider default colors
+  :global(.ant-layout-sider) {
+    background-color: var(--color-sidebar-bg) !important;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  height: 64px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+}
+
+.menu {
+  border-right: 0;
+  flex: 1;
+  overflow: auto;
+  height: 100%;
+  
+  // Override Ant Design Menu dark theme colors
+  :global {
+    .ant-menu-dark {
+      background-color: var(--color-sidebar-bg) !important;
+      
+      .ant-menu-item {
+        color: var(--color-sidebar-text) !important;
+        
+        &:hover {
+          background-color: var(--color-sidebar-hover) !important;
+          color: var(--color-sidebar-text) !important;
+        }
+        
+        &.ant-menu-item-selected {
+          background-color: var(--color-sidebar-selected) !important;
+          color: var(--color-sidebar-text) !important;
+        }
+      }
+      
+      .ant-menu-submenu {
+        .ant-menu-submenu-title {
+          color: var(--color-sidebar-text) !important;
+          
+          &:hover {
+            background-color: var(--color-sidebar-hover) !important;
+            color: var(--color-sidebar-text) !important;
+          }
+        }
+        
+        &.ant-menu-submenu-open > .ant-menu-submenu-title {
+          color: var(--color-sidebar-text) !important;
+        }
+      }
+      
+      .ant-menu-submenu-inline > .ant-menu-submenu-title:hover {
+        background-color: var(--color-sidebar-hover) !important;
+      }
+      
+      .ant-menu-sub {
+        background-color: var(--color-sidebar-bg) !important;
+        
+        .ant-menu-item {
+          color: var(--color-sidebar-text) !important;
+          
+          &:hover {
+            background-color: var(--color-sidebar-hover) !important;
+            color: var(--color-sidebar-text) !important;
+          }
+          
+          &.ant-menu-item-selected {
+            background-color: var(--color-sidebar-selected) !important;
+            color: var(--color-sidebar-text) !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mainLayout {
+  transition: margin-left 0.2s;
+
+  &.collapsed {
+    margin-left: 80px;
+  }
+
+  &.expanded {
+    margin-left: 200px;
+  }
+}
+
+.header {
+  padding: $spacing-md;
+  background: var(--color-bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border-light);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.headerIcon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.headerIconButton {
+  cursor: pointer;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.1);
+  }
+}
+
+.userName {
+  font-weight: 500;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.userAvatar {
+  cursor: pointer;
+}
+
+.content {
+  margin: $spacing-lg $spacing-md;
+  padding: $spacing-lg;
+  min-height: 280px;
+  background: var(--color-bg-secondary);
+  transition: background-color 0.3s ease;
+}
+
+.contentWrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.footer {
+  text-align: right;
+  background: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border-light);
+  padding: 10px;
+  margin: 0;
+  width: 100%;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}

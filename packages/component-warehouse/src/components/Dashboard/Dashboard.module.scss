@@ -116,7 +116,8 @@
 }
 
 .header {
-  padding: $spacing-md;
+  // padding: $spacing-md;
+  padding: 0;
   background: var(--color-bg-primary);
   display: flex;
   align-items: center;
@@ -172,16 +173,21 @@
 }
 
 .content {
-  margin: $spacing-lg $spacing-md;
-  padding: $spacing-lg;
+  // margin: $spacing-lg $spacing-md;
+  margin: 0;
+  // padding: $spacing-lg;
+  padding: $spacing-sm;
   min-height: 280px;
   background: var(--color-bg-secondary);
   transition: background-color 0.3s ease;
 }
 
 .contentWrapper {
-  max-width: 1280px;
-  margin: 0 auto;
+  // max-width: 1280px;
+  // margin: 0 auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
   width: 100%;
 }
 

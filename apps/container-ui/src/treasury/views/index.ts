@@ -1,2 +1,2 @@
 // Treasury views barrel export
-export { PnlDashboard } from './PnlDashboard/PnlDashboard';
+export { PnlDashboardMain as PnlDashboard } from './PnlDashboard/PnlDashboardMain';

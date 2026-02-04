@@ -66,6 +66,7 @@ export async function fetchPnlData(
   year: string
 ): Promise<PnlData[]> {
   const url = `${apiBaseUrl}/pnl_dashboard?start_date=${startDate}&end_date=${endDate}&year=${year}`;
+  // const url = `http://10.115.12.208:8080/pnl_dashboard?start_date=${startDate}&end_date=${endDate}&year=${year}`;
 
   try {
     const response = await fetch(url, {
@@ -90,6 +91,7 @@ export async function fetchPnlDataByDate(
  
   ): Promise<PnlGridResponse> {
     const url = `${apiBaseUrl}/pnl_dashboard/grid?selected_date=${selected_date}`;
+    // const url = `http://10.115.12.208:8080/pnl_dashboard/grid?selected_date=${selected_date}`;
   
     try {
       const response = await fetch(url, {

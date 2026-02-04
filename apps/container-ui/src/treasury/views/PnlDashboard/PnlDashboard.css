@@ -6,7 +6,23 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  height: 100%;
   box-sizing: border-box;
+}
+
+.pnlRawData {
+  flex: 1;
+  min-height: 0;
+  height: calc(100vh - 160px);
+}
+
+.pnlRawDataContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .pnlDashboardHeader {
@@ -15,6 +31,7 @@
 
 .pnlDashboardToggle {
   margin-left: 8px;
+  width: 100px;
 }
 
 .pnlDashboardDatePicker {
@@ -56,9 +73,29 @@
   height: 320px;
   width: 100%;
 }
+.pnlRawDataGrid {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.pnlDashboardChart {
+  width: 100%;
+  flex: 0 0 320px;
+  height: 320px;
+  overflow: visible;
+}
+
+.pnlDashboardChart > div {
+  height: 100%;
+}
+
 
 .pnlDashboardGrid.ag-theme-quartz,
-.pnlDashboardGrid.ag-theme-quartz-dark {
+.pnlDashboardGrid.ag-theme-quartz-dark,
+.pnlRawDataGrid.ag-theme-quartz,
+.pnlRawDataGrid.ag-theme-quartz-dark {
   --ag-font-size: 12px;
   --ag-grid-size: 4px;
   --ag-row-height: 28px;
@@ -68,12 +105,48 @@
 
 .pnlDashboardGrid .ag-cell,
 .pnlDashboardGrid .ag-header-cell,
-.pnlDashboardGrid .ag-header-cell-label {
+.pnlDashboardGrid .ag-header-cell-label,
+.pnlRawDataGrid .ag-cell,
+.pnlRawDataGrid .ag-header-cell,
+.pnlRawDataGrid .ag-header-cell-label {
   padding-left: 6px;
   padding-right: 6px;
 }
 
 .pnlDashboardGrid .ag-cell,
-.pnlDashboardGrid .ag-header-cell-text {
+.pnlDashboardGrid .ag-header-cell-text,
+.pnlRawDataGrid .ag-cell,
+.pnlRawDataGrid .ag-header-cell-text {
   font-size: 12px;
 }
+
+.pnlDashboardTooltip {
+  max-width: 360px;
+}
+
+.pnlDashboardTooltipContent {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px;
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.pnlDashboardTooltipTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.pnlDashboardTooltipActions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pnlDashboard--dark .pnlDashboardTooltipContent {
+  background: #1f2937;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+

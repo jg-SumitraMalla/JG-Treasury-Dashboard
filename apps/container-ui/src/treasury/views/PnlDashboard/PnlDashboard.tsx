@@ -1,24 +1,27 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { GridReadyEvent, ColDef } from 'ag-grid-community';
-import { Spin, Alert, Space, DatePicker, Tag, Switch } from 'antd';
+import { Spin, Alert, Space, DatePicker, Tag, Switch, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useTheme, BodyText } from '@apac-ui-warehouse/component-warehouse';
-import { fetchPnlDataByDate, AssetPnlSummary1, AssetPnlSummary2 } from '../../services/pnlService';
+import { fetchPnlData } from '../../services/pnlService';
+import { fetchPnlGridByDateThunk } from '../../state/pnlSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import {
+  formatLocalDate,
+  toCompactDate,
+  prettifyHeader,
+  normalizeRawDate,
+  isNumericValue,
+  formatRounded,
+  formatNumber,
+} from './pnlUtils';
 import './PnlDashboard.css';
 
 // (No manual module registration required for this app setup)
 
 export const PnlDashboard: React.FC = () => {
   const { theme } = useTheme();
-
-  // selectedDate in yyyy-mm-dd format (bound to DatePicker)
-  const formatLocalDate = (d: Date) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  };
 
   const getTMinus = (days: number) => {
     const d = new Date();
@@ -29,14 +32,22 @@ export const PnlDashboard: React.FC = () => {
   // default to T-2 date
   const [selectedDate, setSelectedDate] = useState<string>(() => getTMinus(2));
 
-  const [table1, setTable1] = useState<AssetPnlSummary1[]>([]);
-  const [table2, setTable2] = useState<AssetPnlSummary2[]>([]);
   const [viewMode, setViewMode] = useState<'MTD' | 'YTD'>('MTD');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [unitMode, setUnitMode] = useState<'$' | 'bps'>('$');
+  const [filtersEnabled, setFiltersEnabled] = useState(false);
+  const { table1, table2, loading, error } = useAppSelector((state) => state.pnl.grid);
+  const [rawDetailOpen, setRawDetailOpen] = useState(false);
+  const [rawDetailLoading, setRawDetailLoading] = useState(false);
+  const [rawDetailError, setRawDetailError] = useState<string | null>(null);
+  const [rawDetailValues, setRawDetailValues] = useState<{
+    cashAtCustodian: any;
+    mmf: any;
+  } | null>(null);
+  const [rawDetailAnchor, setRawDetailAnchor] = useState<HTMLElement | null>(null);
 
   const gridApi1 = useRef<any>(null);
   const gridApi2 = useRef<any>(null);
+  const dispatch = useAppDispatch();
 
   // Shared default column definition
   const defaultColDef = useMemo<ColDef>(() => ({
@@ -65,29 +76,33 @@ const headerMap: Record<string, string> = {
   // add other mappings here...
 };
 
-  // Helper to format numbers as rounded integers with thousand separators
-  const formatRounded = (val: any) => {
-    if (val === null || val === undefined || val === '') return '';
-    const n = Number(val);
-    if (!Number.isFinite(n)) return String(val);
-    return Math.round(n).toLocaleString();
-  };
+    const getHeaderInfo = (key: string) => {
+      const header = headerMap[key] ?? prettifyHeader(key);
+      const headerLower = header.toLowerCase();
+      return {
+        header,
+        hasBps: headerLower.includes('bps'),
+        hasDollar: header.includes('$'),
+        isMtd: key.startsWith('MTD_'),
+        isYtd: key.startsWith('YTD_'),
+      };
+    };
 
-  // Detect numeric-like values (numbers or numeric strings). Excludes booleans.
-  const isNumericValue = (val: any) => {
-    if (val === null || val === undefined || val === '') return false;
-    if (typeof val === 'number') return Number.isFinite(val);
-    if (typeof val === 'string') {
-      const s = val.trim();
-      // numeric regexp: integers, decimals, optional exponent
-      return /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(s);
-    }
-    return false;
-  };
-    const shouldIncludeKey = (key: string) => {
-      if (key.startsWith('MTD_')) return viewMode === 'MTD';
-      if (key.startsWith('YTD_')) return viewMode === 'YTD';
+    const matchesViewMode = (info: ReturnType<typeof getHeaderInfo>) => {
+      if (info.isMtd) return viewMode === 'MTD';
+      if (info.isYtd) return viewMode === 'YTD';
       return true;
+    };
+
+    const matchesUnitMode = (info: ReturnType<typeof getHeaderInfo>) => {
+      if (!info.hasBps && !info.hasDollar) return true;
+      return unitMode === '$' ? info.hasDollar : info.hasBps;
+    };
+
+    const shouldIncludeKey = (key: string) => {
+      if (!filtersEnabled) return true;
+      const info = getHeaderInfo(key);
+      return matchesViewMode(info) && matchesUnitMode(info);
     };
 
     // Build column definitions from first row of each table
@@ -116,8 +131,12 @@ const headerMap: Record<string, string> = {
       });
     };
 
-  const colDefs1 = useMemo<ColDef[]>(() => createColDefs(table1), [table1, viewMode]);
-    const colDefs2 = useMemo<ColDef[]>(() => createColDefs(table2), [table2, viewMode]);
+  const filteredTable1 = useMemo(
+    () => table1.filter((row) => (row as any)?.Asset != 'Total'),
+    [table1]
+  );
+  const colDefs1 = useMemo<ColDef[]>(() => createColDefs(filteredTable1), [filteredTable1, viewMode, unitMode, filtersEnabled]);
+  const colDefs2 = useMemo<ColDef[]>(() => createColDefs(table2), [table2, viewMode, unitMode, filtersEnabled]);
 
   const table1Totals = useMemo(() => {
     if (!table1 || table1.length === 0 || colDefs1.length === 0)
@@ -143,108 +162,75 @@ const headerMap: Record<string, string> = {
     return totals;
   }, [table1, colDefs1]);
 
-  // Convert yyyy-mm-dd to yyyymmdd
-  const toCompactDate = (isoDate: string) => isoDate.replace(/-/g, '');
 
   useEffect(() => {
-    let cancelled = false;
+    const compact = toCompactDate(selectedDate);
+    dispatch(fetchPnlGridByDateThunk(compact));
+  }, [dispatch, selectedDate, toCompactDate]);
 
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const compact = toCompactDate(selectedDate);
-        const resp = await fetchPnlDataByDate(compact);
-        if (cancelled) return;
-        setTable1(resp.table_1 || []);
-        setTable2(resp.table_2 || []);
-      } catch (err: any) {
-        if (cancelled) return;
-        setError(err?.message || String(err));
-        setTable1([]);
-        setTable2([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    load();
-
+  useEffect(() => {
     return () => {
-      cancelled = true;
-    };
-  }, [selectedDate]);
-
-  // When data changes, try to size columns to fit new width
-  useEffect(() => {
-    try {
-      gridApi1.current?.sizeColumnsToFit?.();
-    } catch {}
-    try {
-      gridApi2.current?.sizeColumnsToFit?.();
-    } catch {}
-  }, [table1, table2, viewMode]);
-
-  // Temporarily override parent layout container styles so this page uses full content width.
-  useEffect(() => {
-    // Helper: find elements whose class name contains the given substring (handles CSS modules)
-    const findByPartialClass = (part: string) => {
-      return Array.from(document.querySelectorAll('[class]')).find((el) =>
-        Array.from((el as HTMLElement).classList).some((c) => c.indexOf(part) >= 0)
-      ) as HTMLElement | undefined;
-    };
-
-    const contentWrapper = findByPartialClass('contentWrapper');
-    const content = findByPartialClass('content');
-
-    const prev = {
-      contentWrapper: contentWrapper
-        ? {
-            maxWidth: contentWrapper.style.maxWidth,
-            padding: contentWrapper.style.padding,
-            margin: contentWrapper.style.margin,
-            width: contentWrapper.style.width,
-          }
-        : null,
-      content: content
-        ? {
-            padding: content.style.padding,
-          }
-        : null,
-    };
-
-    if (contentWrapper) {
-      contentWrapper.style.maxWidth = 'none';
-      contentWrapper.style.padding = '0';
-      contentWrapper.style.margin = '0';
-      contentWrapper.style.width = '100%';
-    }
-
-    if (content) {
-      content.style.padding = '0';
-    }
-
-    return () => {
-      // restore previous styles on unmount
-      if (contentWrapper && prev.contentWrapper) {
-        contentWrapper.style.maxWidth = prev.contentWrapper.maxWidth || '';
-        contentWrapper.style.padding = prev.contentWrapper.padding || '';
-        contentWrapper.style.margin = prev.contentWrapper.margin || '';
-        contentWrapper.style.width = prev.contentWrapper.width || '';
-      }
-      if (content && prev.content) {
-        content.style.padding = prev.content.padding || '';
-      }
+      setRawDetailOpen(false);
+      setRawDetailAnchor(null);
     };
   }, []);
 
-  function prettifyHeader(key: string) {
-    // Basic prettify: replace underscores and camelCase boundaries
-    return key
-      .replace(/_/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  }
+  // Auto-size columns based on header + cell content
+  useEffect(() => {
+    const autoSize = (api: any) => {
+      if (!api?.getAllDisplayedColumns || api?.isDestroyed?.()) return;
+      const displayedCols = api.getAllDisplayedColumns();
+      const colIds = displayedCols.map((c: any) => c.getColId());
+      if (colIds.length === 0) return;
+
+      api.autoSizeColumns(colIds, false);
+    };
+    const sizeToFit = (api: any) => {
+      if (!api?.sizeColumnsToFit || api?.isDestroyed?.()) return;
+      api.sizeColumnsToFit();
+    };
+    const timer = setTimeout(() => {
+      if (filtersEnabled) {
+        sizeToFit(gridApi1.current);
+        // sizeToFit(gridApi2.current);
+      } else {
+        autoSize(gridApi1.current);
+        // autoSize(gridApi2.current);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [table1, table2, colDefs1, colDefs2, viewMode, unitMode, filtersEnabled]);
+
+  const handleCurrentNtlClick = async (params: any) => {
+    const colId = params?.column?.getColId?.();
+    const asset = params?.data?.Asset;
+    if (colId !== 'Current_Ntl' || asset !== 'Cash at Custodian & MMF') return;
+    if (!selectedDate) return;
+
+    setRawDetailOpen(true);
+    setRawDetailAnchor(params?.event?.target as HTMLElement | null);
+    setRawDetailLoading(true);
+    setRawDetailError(null);
+    setRawDetailValues(null);
+    try {
+      const compact = toCompactDate(selectedDate);
+      const year = selectedDate.slice(0, 4);
+      const data = await fetchPnlData(compact, compact, year);
+      const match = data.find((row) => normalizeRawDate((row as any)?.date) === selectedDate);
+      if (!match) {
+        setRawDetailError('No raw data found for the selected date.');
+      } else {
+        setRawDetailValues({
+          cashAtCustodian: (match as any)?.Cash_at_Custodian_Ntl,
+          mmf: (match as any)?.MMF_Ntl,
+        });
+      }
+    } catch (err: any) {
+      setRawDetailError(err?.message || String(err));
+    } finally {
+      setRawDetailLoading(false);
+    }
+  };
 
   return (
     // Local container overrides: remove max-width/padding so this page can use full parent width
@@ -264,10 +250,33 @@ const headerMap: Record<string, string> = {
         <Switch
           className="pnlDashboardToggle"
           checked={viewMode === 'YTD'}
-          onChange={(checked) => setViewMode(checked ? 'YTD' : 'MTD')}
+          onChange={(checked) => {
+            setViewMode(checked ? 'YTD' : 'MTD');
+            setFiltersEnabled(true);
+          }}
           checkedChildren="YTD"
           unCheckedChildren="MTD"
         />
+        <Switch
+          className="pnlDashboardToggle"
+          checked={unitMode === 'bps'}
+          onChange={(checked) => {
+            setUnitMode(checked ? 'bps' : '$');
+            setFiltersEnabled(true);
+          }}
+          checkedChildren="bps"
+          unCheckedChildren="$"
+        />
+        <Button
+          type="primary"
+          onClick={() => {
+            setFiltersEnabled(false);
+            setViewMode('MTD');
+            setUnitMode('$');
+          }}
+        >
+          Reset
+        </Button>
       </Space>
 
       {error && <Alert message="Error" description={error} type="error" showIcon />}
@@ -296,14 +305,12 @@ const headerMap: Record<string, string> = {
             className={`pnlDashboardGrid ag-theme-quartz${theme === 'dark' ? '-dark' : ''}`}
           >
             <AgGridReact
-              rowData={table1 as any}
+              rowData={filteredTable1 as any}
               columnDefs={colDefs1}
               defaultColDef={defaultColDef}
+              onCellClicked={handleCurrentNtlClick}
               onGridReady={(params: GridReadyEvent) => {
                 gridApi1.current = params.api;
-                try {
-                  params.api.sizeColumnsToFit();
-                } catch {}
               }}
             />
           </div>
@@ -317,13 +324,47 @@ const headerMap: Record<string, string> = {
               defaultColDef={defaultColDef}
               onGridReady={(params: GridReadyEvent) => {
                 gridApi2.current = params.api;
-                try {
-                  params.api.sizeColumnsToFit();
-                } catch {}
               }}
             />
           </div>
         </>
+      )}
+      {rawDetailOpen && rawDetailAnchor && (
+        <div
+          className="pnlDashboardTooltip"
+          style={{
+            position: 'fixed',
+            zIndex: 1000,
+            left: rawDetailAnchor.getBoundingClientRect().left,
+            top: rawDetailAnchor.getBoundingClientRect().bottom + 6,
+          }}
+        >
+          <div className="pnlDashboardTooltipContent">
+            <div className="pnlDashboardTooltipTitle">
+              Cash at Custodian and MMF - {selectedDate}
+            </div>
+            {rawDetailLoading && <BodyText>Loading...</BodyText>}
+            {rawDetailError && (
+              <Alert message="Error" description={rawDetailError} type="error" showIcon />
+            )}
+            {!rawDetailLoading && !rawDetailError && rawDetailValues && (
+              <Space direction="vertical" size="small">
+                <BodyText>
+                  <strong>Cash at Custodian Ntl:</strong>{' '}
+                  {formatNumber(rawDetailValues.cashAtCustodian) || '-'}
+                </BodyText>
+                <BodyText>
+                  <strong>MMF Ntl:</strong> {formatNumber(rawDetailValues.mmf) || '-'}
+                </BodyText>
+              </Space>
+            )}
+            <div className="pnlDashboardTooltipActions">
+              <Button type="primary" size="small" onClick={() => setRawDetailOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,7 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 // Import component library custom styles (use source SCSS during dev)
 import "@apac-ui-warehouse/component-warehouse/styles.scss";
@@ -12,6 +14,8 @@ initDatadog();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <App />
+        <Provider store={store}>
+            <App />
+        </Provider>
     </React.StrictMode>
 );

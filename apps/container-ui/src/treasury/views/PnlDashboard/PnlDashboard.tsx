@@ -4,7 +4,7 @@ import { GridReadyEvent, ColDef } from 'ag-grid-community';
 import { Spin, Alert, Space, DatePicker, Tag, Switch, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useTheme, BodyText } from '@apac-ui-warehouse/component-warehouse';
-import { fetchPnlData } from '../../services/pnlService';
+  import { fetchPnlData } from '../../services/pnlService';
 import { fetchPnlGridByDateThunk } from '../../state/pnlSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
